@@ -67,20 +67,20 @@
 	<body>
 		<!-- As a heading -->
 		<nav class="navbar navbar-dark bg-primary">
-		  <span class="navbar-brand mb-0 h1"><i>Saral Pay</i></span>
+		  <!-- <span class="navbar-brand mb-0 h1"><i>Saral Pay</i></span> -->
+		  <a class="navbar-brand" href="#" id="navHome"><i>Saral Pay</i></a>
 			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
 			      <!-- <span class="oi oi-cart"></span> -->
-			      <i class="fa fa-cart-plus" aria-hidden="true"><span class="badge badge-pill badge-danger" id="spnCartItemCount">0</span>
-</i>
+			      <i class="fa fa-cart-plus" aria-hidden="true"><span class="badge badge-pill badge-danger" id="spnCartItemCount">0</span></i>
 			</button>
 		</nav>
 
 		
 
-		<div class="container">
+		<div class="container" id="divHome">
 			<div class="row">
 				<div class="col-12">
-					<canter><video id="preview" style="height:300px;"></video><center>
+					<canter><video id="preview" style="height:300px;"></video></center>
 				</div>		
 				<div class="col-12">
 					<div class="" id="divProductCard">
@@ -88,22 +88,13 @@
 				    	<p id="divProductPrice">Some quick example text to build on the card title and make up the bulk of the card's content. </p>
 				    	<a href="#" class="btn btn-primary" id="btnAddToCart" productName='Parle-G' price=10>Add to Cart</a>
 			    	</div>
-					<!-- <div class="card mt1-5" style="">
-				  		<div class="card-body">
-				  			<div class="hide" id="divProductCard">
-					    	<h4 class="card-title" id="divProductTitle">Card title</h4>
-					    	<p class="card-text" id="divProductPrice">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-					    	<a href="#" class="btn btn-primary">Go somewhere</a>
-					    	</div>
-					  	</div>
-					</div> -->
 			    </div>
 			    <div class="col-12">
 			      
-				  <table class="table mt-5">
+				  	<table class="table mt-5">
 				  	  <thead class="thead-light">
 				  	  	<tr>
-				  	  		<th colspan="2"><h3>Cart items</h3></th>
+				  	  		<th colspan="2"><h3>Cart Items</h3></th>
 				  	  		<th><div class="col-8"><a href="#" class="btn btn-dark" id="btnDiscardCart">Discard cart</a></div></th>
 				  	  	</tr>
 				  	  </thead>
@@ -112,25 +103,31 @@
 					  <tfoot id="tfootCartItems">
 					  	<tr class="table-primary">
 					  		<td colspan="2">Total</td>
-					  		<td id="tdTotalPrice"></td>
+					  		<td id="tdTotalPrice" class="text-right"></td>
 					  	</tr>
 					  </tfoot>
-				</table>
+					</table>
+		    	</div>
+		    	<div class="col-12 mb-5" id="divCheckoutButton">
+		    		<button type="button" class="btn btn-primary btn-lg btn-block" id="btnCheckoutCart">Checkout cart</button>
+		    	</div>
 		    </div>
 		</div>
-		
-		<!-- Wrapper -->
-			<div id="wrapper">
-				<!-- <input type="file" accept="image/*" capture> -->
 
-
-				
-					 	<!-- <video id="preview" style="width:75%;height:200px;" class="hide"></video> -->
-    					<div id = "divError"></div>
-				
-				
-
+		<div class="d-none" id="divPaytm">
+			<div class="jumbotron">
+		  		<p class="lead">Your cart amount is</p>
+		  		<h1 class="display-3" id="divCartTotal">Rs. 300</h1>
 			</div>
+			<div>
+				<img src="./images/paytmLogo.png"/>
+			</div>
+			<button type="button" class="btn btn-primary btn-lg btn-block" id="btnContinuePayment">Make payment</button>
+		</div>
+		<!-- Wrapper -->
+		<div id="wrapper">
+			<div id = "divError"></div>
+		</div>
 
 		<!-- Scripts -->
 			<script src="assets/js/jquery.min.js"></script>
@@ -190,18 +187,20 @@
 
 					$('#tfootCartItems').addClass('d-none');
 					$('#btnDiscardCart').addClass('d-none');
+					$('#divCheckoutButton').addClass('d-none');
 					return;
 				}
 
 				$('#tfootCartItems').removeClass('d-none');
 				$('#btnDiscardCart').removeClass('d-none');
+				$('#divCheckoutButton').removeClass('d-none');
 
 				totalPrice = 0;
 				$('#tbodyCartItems').html('');
 				$.each(arrCartItems, function(k,v){
 					rowNum = k + 1;
 					totalPrice += parseInt(v.price);
-					sHtml = '<tr><td scope="row">' + rowNum +'</th><td>'+ v.productName +'</td><td>'+ v.price + '</td></tr>';
+					sHtml = '<tr><td scope="row">' + rowNum +'</th><td>'+ v.productName +'</td><td class="text-right">'+ v.price + '</td></tr>';
 					$('#tbodyCartItems').append(sHtml);
 					$('#tdTotalPrice').html(totalPrice);
 				})
@@ -225,12 +224,27 @@
 				showCartItemList();
 			};
 
+			var onBtnCheckoutCart = function(){
+				$('#divHome').addClass('d-none');
+				$('#divPaytm').removeClass('d-none');
+
+				cartTotal = $('#tdTotalPrice').html();
+				$('#divCartTotal').html('Rs. ' + cartTotal);
+			};
+
+			var onNavHome = function(){
+				$('#divPaytm').addClass('d-none');
+				$('#divHome').removeClass('d-none');
+			};
 			// jquery on ready function
 			$(function() {
 				scanQRCode();
 				showCartItemList();
 			    $("#btnAddToCart").on('click', onBtnAddToCartClick);
 			    $('#btnDiscardCart').on('click', onBtnDiscardCartClick);
+			    $('#btnCheckoutCart').on('click', onBtnCheckoutCart);
+			    $('#navHome').on('click', onNavHome);
+			    $('#btnContinuePayment').on('click', onBtnDiscardCartClick);
 			});
 
 			</script>
