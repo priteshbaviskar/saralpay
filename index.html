@@ -83,10 +83,10 @@
 					<canter><video id="preview" style="height:300px;"></video><center>
 				</div>		
 				<div class="col-12">
-					<div class="hide" id="divProductCard">
+					<div class="" id="divProductCard">
 				    	<h4 id="divProductTitle">Card title</h4>
 				    	<p id="divProductPrice">Some quick example text to build on the card title and make up the bulk of the card's content. </p>
-				    	<a href="#" class="btn btn-primary" id="btnAddToCart" productName='' price=10>Add to Cart</a>
+				    	<a href="#" class="btn btn-primary" id="btnAddToCart" productName='Parle-G' price=10>Add to Cart</a>
 			    	</div>
 					<!-- <div class="card mt1-5" style="">
 				  		<div class="card-body">
@@ -98,6 +98,24 @@
 					  	</div>
 					</div> -->
 			    </div>
+			    <div class="col-12">
+			      
+				  <table class="table mt-5">
+				  	  <thead class="thead-light">
+				  	  	<tr>
+				  	  		<th colspan="2"><h3>Cart items</h3></th>
+				  	  		<th><div class="col-8"><a href="#" class="btn btn-dark" id="btnDiscardCart">Discard cart</a></div></th>
+				  	  	</tr>
+				  	  </thead>
+					  <tbody id="tbodyCartItems">
+					  </tbody>
+					  <tfoot id="tfootCartItems">
+					  	<tr class="table-primary">
+					  		<td colspan="2">Total</td>
+					  		<td id="tdTotalPrice"></td>
+					  	</tr>
+					  </tfoot>
+				</table>
 		    </div>
 		</div>
 		
@@ -108,7 +126,7 @@
 
 				
 					 	<!-- <video id="preview" style="width:75%;height:200px;" class="hide"></video> -->
-    					<div id = "divError">Hello world</div>
+    					<div id = "divError"></div>
 				
 				
 
@@ -134,7 +152,7 @@
 
 					var jsonContent = eval("(" + content + ")");
 
-					$('#divProductCard').removeClass('hide');
+					$('#divProductCard').removeClass('d-none');
 					$('#divProductTitle').html(jsonContent.productName);
 					$('#divProductPrice').html(jsonContent.price);
 
@@ -144,7 +162,7 @@
 			 
 			 	Instascan.Camera.getCameras().then(function (cameras) {
 				 
-					$('#divError').append(" cameras.length = "  + cameras.length);
+					//$('#divError').append(" cameras.length = "  + cameras.length);
 				 	if (cameras.length > 0) {
 				 		scanner.start(cameras[1]);
 			   		} else {
@@ -163,6 +181,33 @@
 			// 	scanQRCode();
 			// };
 
+			var showCartItemList = function() {
+				arrCartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
+
+				if(arrCartItems.length == 0) {
+					sHtml = '<tr><td scope="row" colspan=3><center>Your cart is empty</center></td></tr>';
+					$('#tbodyCartItems').html(sHtml);
+
+					$('#tfootCartItems').addClass('d-none');
+					$('#btnDiscardCart').addClass('d-none');
+					return;
+				}
+
+				$('#tfootCartItems').removeClass('d-none');
+				$('#btnDiscardCart').removeClass('d-none');
+
+				totalPrice = 0;
+				$('#tbodyCartItems').html('');
+				$.each(arrCartItems, function(k,v){
+					rowNum = k + 1;
+					totalPrice += parseInt(v.price);
+					sHtml = '<tr><td scope="row">' + rowNum +'</th><td>'+ v.productName +'</td><td>'+ v.price + '</td></tr>';
+					$('#tbodyCartItems').append(sHtml);
+					$('#tdTotalPrice').html(totalPrice);
+				})
+
+			};
+
 			var onBtnAddToCartClick = function() {
 				arrCartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
 
@@ -171,12 +216,21 @@
 
 				$('#spnCartItemCount').html(arrCartItems.length);
 				localStorage.setItem("cartItems", JSON.stringify(arrCartItems));
+				showCartItemList();
+			};
+
+			var onBtnDiscardCartClick = function(){
+				localStorage.removeItem("cartItems");
+				$('#spnCartItemCount').html('0');
+				showCartItemList();
 			};
 
 			// jquery on ready function
 			$(function() {
 				scanQRCode();
-			    $("#btnAddToCart").on('click', onBtnAddToCartClick)
+				showCartItemList();
+			    $("#btnAddToCart").on('click', onBtnAddToCartClick);
+			    $('#btnDiscardCart').on('click', onBtnDiscardCartClick);
 			});
 
 			</script>
